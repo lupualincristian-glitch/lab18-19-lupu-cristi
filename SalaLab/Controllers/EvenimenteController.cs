@@ -10,6 +10,32 @@ namespace SalaLab.Controllers
         {
             return View(Baza.Evenimente);
         }
+        [HttpPost]
+        public IActionResult Rezerva(int id)
+        {
+            System.Threading.Thread.Sleep(1000);
+            Eveniment eveniment = Baza.Gaseste(id);
+            if (eveniment == null)
+            {
+                return NotFound();
+            }
+            if (eveniment.LocuriLibere == 0)
+            {
+                return Conflict("Nu mai sunt locuri la " + eveniment.Denumire + ".");
+            }
+
+            eveniment.LocuriLibere = eveniment.LocuriLibere - 1;
+            Baza.LocurileMele = Baza.LocurileMele + 1;
+            return PartialView("_RandEveniment", eveniment);
+        }
+        [HttpGet]
+        public IActionResult StatisticaAntet()
+        {
+            RezumatRezervari rezumat = new RezumatRezervari();
+            rezumat.LocurileMele = Baza.LocurileMele;
+            rezumat.TotalLibere = Baza.TotalLibere();
+            return Json(rezumat);
+        }
 
         // Acțiunile pentru cererile trimise din scriptul paginii le scrii aici.
     }

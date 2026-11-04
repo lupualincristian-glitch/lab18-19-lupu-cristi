@@ -12,6 +12,11 @@ namespace CantinaLab.Controllers
             List<Fel> feluri = Baza.Filtreaza(categorie);
             return View(feluri);
         }
+        public IActionResult Lista(string categorie)
+        {
+            List<Fel> feluri = Baza.Filtreaza(categorie);
+            return PartialView("_Lista", feluri);
+        }
 
         // Acțiunile pentru cererile trimise din scriptul paginii le scrii aici.
     }
