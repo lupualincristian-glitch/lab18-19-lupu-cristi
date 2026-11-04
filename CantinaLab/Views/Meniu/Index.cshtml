@@ -56,6 +56,20 @@
 
 @section Scripts {
     <script>
-        // Scriptul paginii. Îl completezi la sarcinile 2, 3 și 4.
+        const zonaLista = document.getElementById("zonaLista");
+
+        document.getElementById("categorie").addEventListener("change", function () {
+            const categorie = document.getElementById("categorie").value;
+            const adresa = "@Url.Action("Lista")"
+                + "?categorie=" + encodeURIComponent(categorie);
+
+            fetch(adresa)
+                .then(function (raspuns) {
+                    return raspuns.text();
+                })
+                .then(function (html) {
+                    zonaLista.innerHTML = html;
+                });
+        });
     </script>
 }
