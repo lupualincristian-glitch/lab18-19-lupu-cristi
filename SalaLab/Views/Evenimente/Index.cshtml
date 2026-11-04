@@ -42,12 +42,18 @@
             const id = buton.dataset.id;
             const rand = buton.closest("tr");
 
-                fetch("@Url.Action("Rezerva")/" + id, { method: "POST" })
+                    fetch("@Url.Action("Rezerva")/" + id, { method: "POST" })
         .then(function (raspuns) {
-            return raspuns.text();
-        })
-        .then(function (html) {
-            rand.outerHTML = html;
+            if (raspuns.ok) {
+                raspuns.text().then(function (html) {
+                    rand.outerHTML = html;
+                    mesaj.textContent = "";
+                });
+            } else {
+                raspuns.text().then(function (text) {
+                    mesaj.textContent = text;
+                });
+            }
         });
         });
     </script>

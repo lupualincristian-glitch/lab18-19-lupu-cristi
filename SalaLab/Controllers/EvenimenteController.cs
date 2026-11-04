@@ -18,6 +18,10 @@ namespace SalaLab.Controllers
             {
                 return NotFound();
             }
+            if (eveniment.LocuriLibere == 0)
+            {
+                return Conflict("Nu mai sunt locuri la " + eveniment.Denumire + ".");
+            }
 
             eveniment.LocuriLibere = eveniment.LocuriLibere - 1;
             Baza.LocurileMele = Baza.LocurileMele + 1;
