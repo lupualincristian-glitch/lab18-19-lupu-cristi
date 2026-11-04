@@ -1,54 +1,57 @@
-@model List<Fel>
 @{
     ViewData["Title"] = "Meniul zilei";
-    string categorieAleasa = ViewBag.Categorie;
 }
 
-<h1>Meniul zilei</h1>
-<p class="text-muted small">Pagina generată la @DateTime.Now.ToString("HH:mm:ss")</p>
+<div class="d-flex justify-content-between align-items-baseline mb-3">
+    <div>
+        <h1 class="display-5 mb-0">Meniul zilei</h1>
+        <p class="text-muted small mb-0">Pagina generată la @DateTime.Now.ToString("HH:mm:ss")</p>
+    </div>
+</div>
 
-<form asp-action="Index" method="get" class="row g-2 align-items-center mb-3">
-    <div class="col-auto">
-        <label for="categorie" class="col-form-label">Categoria</label>
-    </div>
-    <div class="col-auto">
-        <select name="categorie" id="categorie" class="form-select">
-            <option value="">Toate felurile</option>
-            @foreach (string categorie in Baza.Categorii)
-            {
-                <option value="@categorie" selected="@(categorie == categorieAleasa)">@categorie</option>
-            }
-        </select>
-    </div>
-    <div class="col-auto">
-        <button type="submit" class="btn btn-outline-primary">Filtrează</button>
-    </div>
-</form>
+<div class="row g-4">
+    <div class="col-lg-7">
+        <div class="d-flex align-items-center gap-2 mb-3">
+            <label for="categorie" class="form-label mb-0">Categoria</label>
+            <select id="categorie" class="form-select w-auto">
+                <option value="">Toate felurile</option>
+                <option value="Supe">Supe</option>
+                <option value="Feluri principale">Feluri principale</option>
+                <option value="Garnituri">Garnituri</option>
+                <option value="Salate">Salate</option>
+                <option value="Desert">Desert</option>
+            </select>
+            <form asp-action="Index" method="get" class="d-inline">
+                <button type="submit" class="btn btn-outline-primary ms-2">Filtrează</button>
+            </form>
+        </div>
 
-<div class="row">
-    <div class="col-lg-8">
         <div id="zonaLista">
-            <partial name="_Lista" model="Model" />
+            @await Html.PartialAsync("_Lista", CantinaLab.Models.Baza.Filtreaza(null))
         </div>
     </div>
-    <div class="col-lg-4">
-        <div class="card mb-3">
+
+    <div class="col-lg-5">
+        <div class="card mb-4">
             <div class="card-header fw-bold">Valoarea nutritivă</div>
             <div class="card-body">
-                <select id="felAles" class="form-select mb-2">
-                    @foreach (Fel fel in Baza.Feluri)
-                    {
-                        <option value="@fel.Id">@fel.Denumire</option>
-                    }
-                </select>
-                <button type="button" id="btnNutritie" class="btn btn-outline-success">Arată valoarea nutritivă</button>
-                <p id="nutritie" class="mt-2 mb-0"></p>
+                <div class="mb-3">
+                    <select id="felAles" class="form-select">
+                        @foreach (var fel in CantinaLab.Models.Baza.Filtreaza(null))
+                        {
+                            <option value="@fel.Id">@fel.Denumire</option>
+                        }
+                    </select>
+                </div>
+                <button id="btnNutritie" type="button" class="btn btn-outline-success">Arată valoarea nutritivă</button>
+                <p id="nutritie" class="mt-3 mb-0 text-muted"></p>
             </div>
         </div>
-        <div class="card mb-5">
+
+        <div class="card">
             <div class="card-header fw-bold">Rezervă prânzul</div>
             <div class="card-body" id="zonaRezervare">
-                <partial name="_Rezervare" model="new Rezervare()" />
+                @await Html.PartialAsync("_Rezervare", new CantinaLab.Models.Rezervare())
             </div>
         </div>
     </div>
@@ -58,6 +61,7 @@
     <script>
         const zonaLista = document.getElementById("zonaLista");
 
+        // S2. Filtrul cu fetch
         document.getElementById("categorie").addEventListener("change", function () {
             const categorie = document.getElementById("categorie").value;
             const adresa = "@Url.Action("Lista")"
@@ -70,7 +74,10 @@
                 .then(function (html) {
                     zonaLista.innerHTML = html;
                 });
-                        document.getElementById("btnNutritie").addEventListener("click", function () {
+        });
+
+        // S3. Valoarea nutritivă (JSON)
+        document.getElementById("btnNutritie").addEventListener("click", function () {
             const id = document.getElementById("felAles").value;
             const adresa = "@Url.Action("Nutritie")" + "?id=" + encodeURIComponent(id);
             const pNutritie = document.getElementById("nutritie");
@@ -89,6 +96,29 @@
                     pNutritie.innerText = "Informația nutritivă nu este disponibilă.";
                 });
         });
-        });
+
+        // S4. Rezervarea trimisă cu fetch
+        // varianta C
+        function expediazaComanda(e) {
+            if (e.target && e.target.id === "formRezervare") {
+                e.preventDefault();
+                const form = e.target;
+                const dateForm = new FormData(form);
+                const adresa = form.action;
+
+                fetch(adresa, {
+                    method: "POST",
+                    body: dateForm
+                })
+                .then(function (raspuns) {
+                    return raspuns.text();
+                })
+                .then(function (html) {
+                    document.getElementById("zonaRezervare").innerHTML = html;
+                });
+            }
+        }
+
+        document.getElementById("zonaRezervare").addEventListener("submit", expediazaComanda);
     </script>
 }
