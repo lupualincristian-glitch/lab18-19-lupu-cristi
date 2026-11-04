@@ -70,6 +70,25 @@
                 .then(function (html) {
                     zonaLista.innerHTML = html;
                 });
+                        document.getElementById("btnNutritie").addEventListener("click", function () {
+            const id = document.getElementById("felAles").value;
+            const adresa = "@Url.Action("Nutritie")" + "?id=" + encodeURIComponent(id);
+            const pNutritie = document.getElementById("nutritie");
+
+            fetch(adresa)
+                .then(function (raspuns) {
+                    if (!raspuns.ok) {
+                        throw new Error("Negăsit");
+                    }
+                    return raspuns.json();
+                })
+                .then(function (date) {
+                    pNutritie.innerText = "Calorii: " + date.calorii + " kcal · Proteine: " + date.proteine + " g · Preț: " + date.pret + " lei";
+                })
+                .catch(function (eroare) {
+                    pNutritie.innerText = "Informația nutritivă nu este disponibilă.";
+                });
+        });
         });
     </script>
 }
