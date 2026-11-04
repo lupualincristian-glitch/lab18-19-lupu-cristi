@@ -10,6 +10,19 @@ namespace SalaLab.Controllers
         {
             return View(Baza.Evenimente);
         }
+        [HttpPost]
+        public IActionResult Rezerva(int id)
+        {
+            Eveniment eveniment = Baza.Gaseste(id);
+            if (eveniment == null)
+            {
+                return NotFound();
+            }
+
+            eveniment.LocuriLibere = eveniment.LocuriLibere - 1;
+            Baza.LocurileMele = Baza.LocurileMele + 1;
+            return PartialView("_RandEveniment", eveniment);
+        }
 
         // Acțiunile pentru cererile trimise din scriptul paginii le scrii aici.
     }

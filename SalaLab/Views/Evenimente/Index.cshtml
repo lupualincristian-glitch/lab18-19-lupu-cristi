@@ -42,7 +42,13 @@
             const id = buton.dataset.id;
             const rand = buton.closest("tr");
 
-            // Sarcina 1: de aici trimiți cererea POST și înlocuiești rândul.
+                fetch("@Url.Action("Rezerva")/" + id, { method: "POST" })
+        .then(function (raspuns) {
+            return raspuns.text();
+        })
+        .then(function (html) {
+            rand.outerHTML = html;
+        });
         });
     </script>
 }
