@@ -1,0 +1,85 @@
+# Verificarea automată a laboratoarelor nr. 18 și nr. 19.
+# Rulează la fiecare Pull Request deschis către main și la fiecare Push făcut după aceea.
+# Ramura lab-18 verifică CantinaLab, ramura lab-19 verifică SalaLab.
+# Nu modifica acest fișier și nici folderul .github: Pull Request-ul care le atinge nu se verifică.
+
+name: Verificare laborator
+
+on:
+  pull_request:
+    branches: [ main ]
+
+permissions:
+  contents: read
+
+jobs:
+  verificare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Codul din ramura ta
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+
+      - name: Laboratorul, după numele ramurii
+        id: lab
+        run: |
+          case "${{ github.head_ref }}" in
+            lab-18) echo "lab=18" >> "$GITHUB_OUTPUT"; echo "proiect=CantinaLab" >> "$GITHUB_OUTPUT" ;;
+            lab-19) echo "lab=19" >> "$GITHUB_OUTPUT"; echo "proiect=SalaLab" >> "$GITHUB_OUTPUT" ;;
+            *) echo "### ❌ Ramura se numește „${{ github.head_ref }}”. Trebuie să fie lab-18 sau lab-19." >> "$GITHUB_STEP_SUMMARY"; exit 1 ;;
+          esac
+
+      - name: Fișierele verificării nu au fost modificate
+        run: |
+          if git diff --name-only "origin/main...HEAD" | grep -q '^\.github/'; then
+            echo "### ❌ Pull Request-ul modifică fișiere din folderul .github. Verificarea nu rulează." >> "$GITHUB_STEP_SUMMARY"
+            git diff --name-only "origin/main...HEAD" | grep '^\.github/' | sed 's/^/- /' >> "$GITHUB_STEP_SUMMARY"
+            exit 1
+          fi
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Browserul pentru verificare
+        run: |
+          pip install --quiet playwright==1.47.0
+          python -m playwright install --with-deps chromium > /dev/null
+
+      - name: Compilarea
+        run: |
+          set +e
+          dotnet build "${{ steps.lab.outputs.proiect }}.sln" -c Debug > build.log 2>&1
+          rezultat=$?
+          if [ $rezultat -ne 0 ]; then
+            echo "### ❌ Proiectul ${{ steps.lab.outputs.proiect }} nu se compilează" >> "$GITHUB_STEP_SUMMARY"
+            echo '```' >> "$GITHUB_STEP_SUMMARY"
+            grep -E ' error ' build.log | sort -u | head -15 >> "$GITHUB_STEP_SUMMARY"
+            echo '```' >> "$GITHUB_STEP_SUMMARY"
+          fi
+          exit $rezultat
+
+      - name: Pornirea aplicației
+        run: |
+          cd "${{ steps.lab.outputs.proiect }}"
+          nohup dotnet "bin/Debug/net9.0/${{ steps.lab.outputs.proiect }}.dll" --urls=http://localhost:5100 --environment=Development > ../app.log 2>&1 &
+          for i in $(seq 1 60); do curl -s -o /dev/null http://localhost:5100/ && break; sleep 1; done
+          curl -s -o /dev/null -w "Aplicația răspunde: %{http_code}\n" http://localhost:5100/
+
+      - name: Verificarea în browser
+        run: |
+          git diff "origin/main...HEAD" -- "${{ steps.lab.outputs.proiect }}" > pr.diff
+          git log --format=%s "origin/main..HEAD" > commituri.txt
+          python .github/verificare/verifica.py --lab "${{ steps.lab.outputs.lab }}" --url http://localhost:5100 \
+            --repo "${{ github.repository }}" --diff pr.diff --commituri commituri.txt --rezumat "$GITHUB_STEP_SUMMARY"
+
+      - name: Jurnalul aplicației (la eroare)
+        if: failure()
+        run: tail -n 40 app.log || true

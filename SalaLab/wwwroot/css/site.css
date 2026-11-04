@@ -1,0 +1,39 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+
+.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
+  color: var(--bs-secondary-color);
+  text-align: end;
+}
+
+.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
+  text-align: start;
+}
+/* Formularele generate cu Html.EditorForModel(): aspect Bootstrap */
+.editor-label { margin-top: 0.75rem; font-weight: 500; }
+.editor-field input.text-box { display: block; width: 100%; max-width: 32rem; padding: 0.375rem 0.75rem;
+  border: 1px solid #ced4da; border-radius: 0.375rem; }
+.editor-field input.check-box { margin-top: 0.25rem; }
+.field-validation-error { color: #dc3545; display: block; }
+.display-label { margin-top: 0.5rem; font-weight: 600; color: #495057; }
+.display-field { margin-bottom: 0.25rem; }

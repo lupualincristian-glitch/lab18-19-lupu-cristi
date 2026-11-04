@@ -1,0 +1,48 @@
+@model List<Eveniment>
+@{
+    ViewData["Title"] = "Evenimente";
+}
+
+<h1>Evenimente în noiembrie</h1>
+<p class="text-muted small">Pagina generată la @DateTime.Now.ToString("HH:mm:ss")</p>
+
+<p id="mesaj" class="text-danger fw-semibold" role="status"></p>
+
+<table class="table align-middle mb-5">
+    <thead>
+        <tr>
+            <th>Evenimentul</th>
+            <th>Data</th>
+            <th>Sala</th>
+            <th>Locuri libere</th>
+            <th></th>
+            <th class="text-muted small">Rând generat la</th>
+        </tr>
+    </thead>
+    <tbody id="corpTabel">
+        @foreach (Eveniment eveniment in Model)
+        {
+            <partial name="_RandEveniment" model="eveniment" />
+        }
+    </tbody>
+</table>
+
+@section Scripts {
+    <script>
+        const corpTabel = document.getElementById("corpTabel");
+        const mesaj = document.getElementById("mesaj");
+
+        // Un singur ascultător pentru toate butoanele „Rezervă un loc”.
+        // Stă pe <tbody>, care rămâne pe pagină când rândurile se înlocuiesc.
+        corpTabel.addEventListener("click", function (eveniment) {
+            const buton = eveniment.target.closest("button[data-id]");
+            if (buton === null) {
+                return; // clicul nu a fost pe un buton
+            }
+            const id = buton.dataset.id;
+            const rand = buton.closest("tr");
+
+            // Sarcina 1: de aici trimiți cererea POST și înlocuiești rândul.
+        });
+    </script>
+}

@@ -1,0 +1,37 @@
+@model Rezervare
+
+<form asp-action="Rezerva" method="post">
+    <div class="mb-2">
+        <label asp-for="Nume" class="form-label"></label>
+        <input asp-for="Nume" class="form-control" />
+        <span asp-validation-for="Nume" class="text-danger small"></span>
+    </div>
+    <div class="mb-2">
+        <label asp-for="Grupa" class="form-label"></label>
+        <input asp-for="Grupa" class="form-control" />
+        <span asp-validation-for="Grupa" class="text-danger small"></span>
+    </div>
+    <div class="mb-2">
+        <label asp-for="FelId" class="form-label"></label>
+        <select asp-for="FelId" class="form-select">
+            <option value="0">— alege felul —</option>
+            @foreach (Fel fel in Baza.Feluri)
+            {
+                <option value="@fel.Id">@fel.Denumire</option>
+            }
+        </select>
+        <span asp-validation-for="FelId" class="text-danger small"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Pauza" class="form-label"></label>
+        <select asp-for="Pauza" class="form-select">
+            <option value="">— alege pauza —</option>
+            @foreach (string pauza in Baza.Pauze)
+            {
+                <option value="@pauza">@pauza</option>
+            }
+        </select>
+        <span asp-validation-for="Pauza" class="text-danger small"></span>
+    </div>
+    <button type="submit" class="btn btn-success">Rezervă</button>
+</form>

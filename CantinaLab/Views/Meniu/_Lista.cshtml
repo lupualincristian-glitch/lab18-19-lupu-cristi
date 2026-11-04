@@ -1,0 +1,32 @@
+@model List<Fel>
+
+<p class="text-muted">
+    Feluri găsite: @Model.Count · lista generată la @DateTime.Now.ToString("HH:mm:ss")
+</p>
+
+<table class="table table-striped align-middle">
+    <thead>
+        <tr>
+            <th>Felul</th>
+            <th>Categoria</th>
+            <th class="text-end">Prețul</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (Fel fel in Model)
+        {
+            <tr>
+                <td>@fel.Denumire</td>
+                <td>@fel.Categorie</td>
+                <td class="text-end">@fel.Pret lei</td>
+                <td>
+                    @if (fel.Vegetarian)
+                    {
+                        <span class="badge text-bg-success">vegetarian</span>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

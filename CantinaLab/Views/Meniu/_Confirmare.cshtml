@@ -1,0 +1,9 @@
+@model Rezervare
+@{
+    Fel fel = Baza.Gaseste(Model.FelId);
+}
+
+<div class="alert alert-success mb-0">
+    <strong>Rezervarea nr. @Model.Numar</strong><br />
+    @Model.Nume, @Model.Grupa: @fel.Denumire, pauza de la @Model.Pauza.
+</div>

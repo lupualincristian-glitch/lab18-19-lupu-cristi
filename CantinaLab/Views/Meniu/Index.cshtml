@@ -1,0 +1,61 @@
+@model List<Fel>
+@{
+    ViewData["Title"] = "Meniul zilei";
+    string categorieAleasa = ViewBag.Categorie;
+}
+
+<h1>Meniul zilei</h1>
+<p class="text-muted small">Pagina generată la @DateTime.Now.ToString("HH:mm:ss")</p>
+
+<form asp-action="Index" method="get" class="row g-2 align-items-center mb-3">
+    <div class="col-auto">
+        <label for="categorie" class="col-form-label">Categoria</label>
+    </div>
+    <div class="col-auto">
+        <select name="categorie" id="categorie" class="form-select">
+            <option value="">Toate felurile</option>
+            @foreach (string categorie in Baza.Categorii)
+            {
+                <option value="@categorie" selected="@(categorie == categorieAleasa)">@categorie</option>
+            }
+        </select>
+    </div>
+    <div class="col-auto">
+        <button type="submit" class="btn btn-outline-primary">Filtrează</button>
+    </div>
+</form>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div id="zonaLista">
+            <partial name="_Lista" model="Model" />
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card mb-3">
+            <div class="card-header fw-bold">Valoarea nutritivă</div>
+            <div class="card-body">
+                <select id="felAles" class="form-select mb-2">
+                    @foreach (Fel fel in Baza.Feluri)
+                    {
+                        <option value="@fel.Id">@fel.Denumire</option>
+                    }
+                </select>
+                <button type="button" id="btnNutritie" class="btn btn-outline-success">Arată valoarea nutritivă</button>
+                <p id="nutritie" class="mt-2 mb-0"></p>
+            </div>
+        </div>
+        <div class="card mb-5">
+            <div class="card-header fw-bold">Rezervă prânzul</div>
+            <div class="card-body" id="zonaRezervare">
+                <partial name="_Rezervare" model="new Rezervare()" />
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Scriptul paginii. Îl completezi la sarcinile 2, 3 și 4.
+    </script>
+}

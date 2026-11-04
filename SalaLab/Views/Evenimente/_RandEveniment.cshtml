@@ -1,0 +1,20 @@
+@model Eveniment
+@{
+    // Rândul unui eveniment fără locuri are fundal gri.
+    string clasa = "";
+    if (Model.LocuriLibere == 0)
+    {
+        clasa = "table-secondary";
+    }
+}
+
+<tr class="@clasa">
+    <td>@Model.Denumire</td>
+    <td>@Model.Data.ToString("dd.MM, HH:mm")</td>
+    <td>@Model.Sala</td>
+    <td><strong>@Model.LocuriLibere</strong> din @Model.LocuriTotal</td>
+    <td>
+        <button type="button" class="btn btn-sm btn-primary" data-id="@Model.Id">Rezervă un loc</button>
+    </td>
+    <td class="text-muted small">@DateTime.Now.ToString("HH:mm:ss")</td>
+</tr>
