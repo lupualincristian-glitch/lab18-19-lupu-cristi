@@ -4,11 +4,11 @@
 
 | | |
 |---|---|
-| **Numele și prenumele** | *(scrie aici)* |
+| **Numele și prenumele** | Lupu Alin-Cristian |
 | **Grupa** | AAW2341 |
 | **Data** | 04.11.2026 |
 | **Ramura** | `lab-18` |
-| **Varianta** (din subsolul paginii) | *(scrie aici, de exemplu `popescu-ion · cod 37`)* |
+| **Varianta** (59) | *(Lupu Alin-Cristian . cod 59)* |
 
 > **Cum completezi raportul**
 >
