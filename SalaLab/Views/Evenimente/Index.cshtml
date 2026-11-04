@@ -41,20 +41,30 @@
             }
             const id = buton.dataset.id;
             const rand = buton.closest("tr");
+                    buton.disabled = true;
+        const textInitial = buton.textContent;
+        buton.textContent = "Se rezervă…";
 
-                    fetch("@Url.Action("Rezerva")/" + id, { method: "POST" })
-        .then(function (raspuns) {
-            if (raspuns.ok) {
-                raspuns.text().then(function (html) {
-                    rand.outerHTML = html;
-                    mesaj.textContent = "";
-                });
-            } else {
-                raspuns.text().then(function (text) {
-                    mesaj.textContent = text;
-                });
-            }
-        });
+        fetch("@Url.Action("Rezerva")/" + id, { method: "POST" })
+            .then(function (raspuns) {
+                if (raspuns.ok) {
+                    raspuns.text().then(function (html) {
+                        rand.outerHTML = html;
+                        mesaj.textContent = "";
+                    });
+                } else {
+                    buton.disabled = false;
+                    buton.textContent = textInitial;
+                    raspuns.text().then(function (text) {
+                        mesaj.textContent = text;
+                    });
+                }
+            })
+            .catch(function () {
+                buton.disabled = false;
+                buton.textContent = textInitial;
+                mesaj.textContent = "Serverul nu răspunde. Încearcă din nou.";
+            });
         });
     </script>
 }

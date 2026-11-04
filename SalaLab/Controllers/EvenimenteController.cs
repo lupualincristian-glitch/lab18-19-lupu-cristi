@@ -13,6 +13,7 @@ namespace SalaLab.Controllers
         [HttpPost]
         public IActionResult Rezerva(int id)
         {
+            System.Threading.Thread.Sleep(1000);
             Eveniment eveniment = Baza.Gaseste(id);
             if (eveniment == null)
             {
