@@ -28,6 +28,14 @@ namespace SalaLab.Controllers
             Baza.LocurileMele = Baza.LocurileMele + 1;
             return PartialView("_RandEveniment", eveniment);
         }
+        [HttpGet]
+        public IActionResult StatisticaAntet()
+        {
+            RezumatRezervari rezumat = new RezumatRezervari();
+            rezumat.LocurileMele = Baza.LocurileMele;
+            rezumat.TotalLibere = Baza.TotalLibere();
+            return Json(rezumat);
+        }
 
         // Acțiunile pentru cererile trimise din scriptul paginii le scrii aici.
     }

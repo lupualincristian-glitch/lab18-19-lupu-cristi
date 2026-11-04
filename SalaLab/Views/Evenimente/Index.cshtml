@@ -65,6 +65,34 @@
                 buton.textContent = textInitial;
                 mesaj.textContent = "Serverul nu răspunde. Încearcă din nou.";
             });
+                    // varianta D
+        function improspateazaAntetul() {
+            fetch("@Url.Action("StatisticaAntet")")
+                .then(function (raspuns) {
+                    return raspuns.json();
+                })
+                .then(function (date) {
+                    const locurileMeleElem = document.getElementById("locurileMele");
+                    const totalLibereElem = document.getElementById("totalLibere");
+                    if (locurileMeleElem !== null) {
+                        locurileMeleElem.textContent = date.locurileMele;
+                    }
+                    if (totalLibereElem !== null) {
+                        totalLibereElem.textContent = date.totalLibere;
+                    }
+                });
+        }
+
+        // În interiorul ascultătorului de clic (după rand.outerHTML = html;):
+        // ...
+        if (raspuns.ok) {
+            raspuns.text().then(function (html) {
+                rand.outerHTML = html;
+                mesaj.textContent = "";
+                improspateazaAntetul();
+            });
+        }
+        // ...
         });
     </script>
 }
